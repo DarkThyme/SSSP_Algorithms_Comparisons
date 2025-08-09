@@ -1,0 +1,68 @@
+import time
+import heapq
+import sys
+
+#Adjust this so Python doesn't choke on deep recursion (big graphs)
+sys.setrecursionlimit(10**7)
+
+
+GRAPH_FILE_PATH = r"D:\soc-LiveJournal1.txt\soc-LiveJournal1.txt"  
+DIRECTED = True  #Set False for undirected graphs
+SOURCE_NODE = 0  #Change to any node ID present in your dataset
+
+
+def load_graph(file_path, directed=True):
+    """
+    Load an edge list from a file into an adjacency list.
+    Assumes each line: src dst [optional_weight]
+    Ignores lines starting with '#'
+    """
+    adj = {}
+    with open(file_path, "r") as f:
+        for line in f:
+            if line.startswith("#"):
+                continue
+            parts = line.strip().split()
+            if len(parts) < 2:
+                continue
+            u, v = int(parts[0]), int(parts[1])
+            w = float(parts[2]) if len(parts) >= 3 else 1.0
+            adj.setdefault(u, []).append((v, w))
+            if not directed:
+                adj.setdefault(v, []).append((u, w))
+    return adj
+
+def dijkstra(adj, source):
+    """
+    Standard Dijkstra's algorithm using a min-heap priority queue.
+    Returns dict: node -> shortest distance from source.
+    """
+    dist = {source: 0.0}
+    visited = set()
+    heap = [(0.0, source)]
+
+    while heap:
+        d, u = heapq.heappop(heap)
+        if u in visited:
+            continue
+        visited.add(u)
+        for v, w in adj.get(u, []):
+            nd = d + w
+            if nd < dist.get(v, float("inf")):
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+    return dist
+
+if __name__ == "__main__":
+    print(f"Loading graph from {GRAPH_FILE_PATH} ...")
+    start_load = time.time()
+    adj_list = load_graph(GRAPH_FILE_PATH, directed=DIRECTED)
+    load_time = time.time() - start_load
+    print(f"Graph loaded in {load_time:.2f} seconds with {len(adj_list)} nodes.")
+
+    print(f"Running Dijkstra from source node {SOURCE_NODE} ...")
+    start_algo = time.time()
+    dist_dijkstra = dijkstra(adj_list, SOURCE_NODE)
+    algo_time = time.time() - start_algo
+    print(f"Dijkstra completed in {algo_time:.2f} seconds.")
+    print(f"Visited {len(dist_dijkstra)} nodes.")
