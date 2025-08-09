@@ -87,8 +87,8 @@ return min(B', B), U ∪ {x ∈ W : d[x] < min(B', B)}
 
 ## Files
 
-- `dijkstra`: Python implementation of Dijkstra's algorithm.
-- `bmssp.py`: Python implementation of BMSSP algorithm following the pseudocode.
+- `Djikstra`: Python implementation of Dijkstra's algorithm.
+- `BMSSP.py`: Python implementation of BMSSP algorithm following the pseudocode.
 
 ---
 
